@@ -4,26 +4,20 @@ const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config/config.js');
 
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const { name, email, password } = req.body;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email)) {
       return res.status(400).json({ status: 400, error: 'Invalid email format' });
-  }
-
-  try {
-      const existingUser = await User.findOne({ email });
-
-      if (existingUser) {
-          return res.status(400).json({ error: 'Email is already registered' });
-      }
-
+    }
+  
+    try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await User.create({ name, email, password: hashedPassword });
       return res.status(200).json({ status: 200, success: true, message: 'User registered successfully' });
-  } catch (error) {
+    } catch (error) {
       return res.status(500).json({ status: 500, error: `Failed to register user: ${error.message}` });
-  }
+    }
 };
 
 const login = async (req, res) => {
