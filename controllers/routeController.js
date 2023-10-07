@@ -1,27 +1,21 @@
-const API_KEY = process.env.OPENROUTESERVICE_API_KEY;
 const axios = require('axios');
+const qs = require('qs');
+const ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 
 const getRoute = async (req, res) => {
-    const { coordinates } = req.body;
+    const { coordinates } = req.query;
 
-    if (!coordinates || coordinates.length !== 2 || coordinates[0].length !== 2 || coordinates[1].length !== 2) {
-        return res.status(400).json({ 
+    if (!coordinates || typeof coordinates !== 'string') {
+        return res.status(400).json({
             status : 400,
             success: false,
             error: "Invalid coordinates provided.",
-            details: "Coordinates must be an array of two pairs of latitude and longitude."
+            details: "Coordinates must be a string in the format 'lon1,lat1;lon2,lat2'."
         });
     }
 
     try {
-        const response = await axios.post('https://api.openrouteservice.org/v2/directions/foot-walking', {
-            coordinates: coordinates
-        },{
-            headers: {
-                'Authorization': API_KEY,
-                'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8'
-            }
-        });
+        const response = await axios.get(`https://api.mapbox.com/directions/v5/mapbox/walking/${coordinates}?alternatives=true&continue_straight=true&geometries=geojson&language=id&overview=simplified&steps=true&access_token=${ACCESS_TOKEN}`);
         
         return res.status(200).json({
             status : 200,
