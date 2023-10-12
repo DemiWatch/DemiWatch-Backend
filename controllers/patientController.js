@@ -1,4 +1,4 @@
-const Patient = require('../models/patientmodel.js');
+const Patient = require('../models/patientModel.js');
 
 async function tambahPatient(req, res) {
   const { nama, umur, jenisPenyakit, catatan, kode, alamatRumah, alamatTujuan } = req.body;
