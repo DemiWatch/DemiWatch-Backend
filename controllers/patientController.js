@@ -68,8 +68,13 @@ async function updatePatient(req, res){
   }
 }
 
+async function getPatientByKode(kode) {
+  return await Patient.findOne({ kode: kode });
+}
+
 module.exports = {
   tambahPatient,
   getPatient,
-  updatePatient
+  updatePatient,
+  getPatientByKode
 };

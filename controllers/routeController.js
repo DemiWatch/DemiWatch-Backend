@@ -1,6 +1,8 @@
 const axios = require('axios');
 const qs = require('qs');
 const ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
+const { getPatientByKode } = require('../controllers/patientController');
+const {haversineDistance } = require('../utils/distanceUtils');
 
 const getRoute = async (req, res) => {
     const { coordinates } = req.query;
@@ -32,6 +34,82 @@ const getRoute = async (req, res) => {
     }
 };
 
+const liveLocation = async (req, res) => {
+    const { longitude, latitude, kode } = req.body;
+
+    if (!latitude || !longitude || typeof latitude !== 'number' || typeof longitude !== 'number') {
+        return res.status(400).json({
+            status: 400,
+            success: false,
+            error: "Invalid coordinates provided.",
+            details: "Coordinates must include 'latitude' and 'longitude' as numbers."
+        });
+    }
+
+    const patientData = await getPatientByKode(kode);
+    if (!patientData || !patientData.alamatTujuan) {
+        return res.status(404).json({
+            status: 404,
+            success: false,
+            error: "Patient data not found or destination address missing."
+        });
+    }
+
+    lastLocation = { longitude, latitude };
+    lastKode = kode;
+
+    return res.status(200).json({
+        status: 200,
+        success: true,
+        message: "Location updated successfully."
+    });
+};
+
+const getLocation = async (req, res) => {
+    if (lastLocation && lastKode) {
+        const patientData = await getPatientByKode(lastKode);
+        if (!patientData || !patientData.alamatTujuan) {
+            return res.status(404).json({
+                status: 404,
+                success: false,
+                error: "Patient data not found or destination address missing."
+            });
+        }
+
+        const destinationCoords = {
+            longitude: patientData.alamatTujuan.longi, 
+            latitude: patientData.alamatTujuan.lat 
+        };
+
+        const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
+        console.log("Sent coordinates:", lastLocation.longitude, lastLocation.latitude);
+        console.log("Destination coordinates:", destinationCoords.longitude, destinationCoords.latitude);
+        console.log("Calculated distance:", distanceToDestination);
+
+        if (distanceToDestination <= 0.05) {
+            return res.status(200).json({
+                status: 200,
+                success: true,
+                message: "Arrived at destination."
+            });
+        } else {
+            return res.status(200).json({
+                status: 200,
+                success: true,
+                message: "On the way to destination."
+            });
+        }       
+    } else {
+        return res.status(404).json({
+            status: 404,
+            success: false,
+            error: "Location data not available.",
+            details: "No location data found."
+        });
+    }
+};
+
+
 module.exports = {
-    getRoute
+    getRoute, liveLocation, getLocation
 };
