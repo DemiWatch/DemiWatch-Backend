@@ -13,8 +13,7 @@ const getRoute = async (req, res) => {
         return res.status(400).json({
             status : 400,
             success: false,
-            error: "Invalid coordinates provided.",
-            details: "Coordinates must be a string in the format 'lon1,lat1;lon2,lat2'."
+            error: "Invalid coordinates provided, must be a string in the format 'lon1,lat1;lon2,lat2"
         });
     }
 
@@ -30,8 +29,7 @@ const getRoute = async (req, res) => {
         return res.status(500).json({ 
             status : 500,
             success: false,
-            error: "Error fetching route.", 
-            details: error.message 
+            error: "Error fetching route."
         });
     }
 };
@@ -43,8 +41,7 @@ const liveLocation = async (req, res) => {
         return res.status(400).json({
             status: 400,
             success: false,
-            error: "Invalid coordinates provided.",
-            details: "Coordinates must include 'latitude' and 'longitude' as numbers."
+            error: "Invalid coordinates provided, must include 'latitude' and 'longitude' as numbers."
         });
     }
 
@@ -108,8 +105,7 @@ const getLocation = async (req, res) => {
         return res.status(404).json({
             status: 404,
             success: false,
-            error: "Location data not available.",
-            details: "No location data found."
+            error: "Location data not available."
         });
     }
 };

@@ -20,9 +20,16 @@ async function tambahPatient(req, res) {
       alamatTujuan,
     });
 
-    res.status(201).json({ message: 'Data pasien berhasil disimpan', data: dataPatient });
+    res.status(201).json({
+      message: 'Data pasien berhasil disimpan', 
+      data: dataPatient 
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Terjadi kesalahan saat menyimpan data pasien' });
+    return res.status(500).json({
+      status: 500,
+      success: false,
+      error: "Terjadi kesalahan saat menyimpan data pasien"
+    });
   }
 }
 
@@ -38,7 +45,11 @@ async function getPatient(req, res) {
 
     res.json({ data: dataPatient });
   } catch (error) {
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data pasien' });
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: 'Terjadi kesalahan saat mengambil data pasien'
+    });
   }
 }
 
@@ -59,12 +70,23 @@ async function updatePatient(req, res){
     }, { new: true });
 
     if (!updatedPatient) {
-      return res.status(404).json({ message: 'Data pasien tidak ditemukan' });
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        message: 'Data pasien tidak ditemukan'
+      });
     }
 
-    res.json({ message: 'Data pasien berhasil diperbarui', data: updatedPatient });
+    res.json({
+      message: 'Data pasien berhasil diperbarui',
+      data: updatedPatient
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui data pasien' });
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: 'Terjadi kesalahan saat memperbarui data pasien'
+    });
   }
 }
 
