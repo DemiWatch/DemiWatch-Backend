@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  name: String,
+  nama: String,
   email: String,
-  password: String
+  password: String,
+  telepon: String,
+  status: String,
+  radius: String
 });
 
 const User = mongoose.model('User', userSchema);

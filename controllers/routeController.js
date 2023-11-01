@@ -66,49 +66,54 @@ const liveLocation = async (req, res) => {
 };
 
 const getLocation = async (req, res) => {
-    if (lastLocation && lastKode) {
-        const patientData = await getPatientByKode(lastKode);
-        if (!patientData || !patientData.alamatTujuan) {
-            return res.status(404).json({
-                status: 404,
-                success: false,
-                error: "Patient data not found or destination address missing."
-            });
-        }
+    const patientData = await getPatientByKode(lastKode || kode);
+    if (!patientData) {
+        return res.status(404).json({
+            status: 404,
+            success: false,
+            error: "Patient data not found."
+        });
+    }
 
-        const destinationCoords = {
-            longitude: patientData.alamatTujuan.longi, 
-            latitude: patientData.alamatTujuan.lat 
+    if (!lastLocation && patientData.alamatRumah) {
+        lastLocation = {
+            longitude: patientData.alamatRumah.longi,
+            latitude: patientData.alamatRumah.lat
         };
+    }
 
-        const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
-        console.log("Sent coordinates:", lastLocation.longitude, lastLocation.latitude);
-        console.log("Destination coordinates:", destinationCoords.longitude, destinationCoords.latitude);
-        console.log("Calculated distance:", distanceToDestination);
-
-        if (distanceToDestination <= 0.05) {
-            return res.status(200).json({
-                status: 200,
-                success: true,
-                message: "Arrived at destination.",
-                location : location
-            });
-        } else {
-            return res.status(200).json({
-                status: 200,
-                success: true,
-                message: "On the way to destination.",
-                location : location
-            });
-        }       
-    } else {
+    if (!lastLocation) {
         return res.status(404).json({
             status: 404,
             success: false,
             error: "Location data not available."
         });
     }
+
+    const destinationCoords = {
+        longitude: patientData.alamatTujuan.longi, 
+        latitude: patientData.alamatTujuan.lat 
+    };
+
+    const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
+
+    if (distanceToDestination <= 0.05) {
+        return res.status(200).json({
+            status: 200,
+            success: true,
+            message: "Arrived at destination.",
+            location: lastLocation
+        });
+    } else {
+        return res.status(200).json({
+            status: 200,
+            success: true,
+            message: "On the way to destination.",
+            location: lastLocation
+        });
+    }       
 };
+
 
 
 module.exports = {

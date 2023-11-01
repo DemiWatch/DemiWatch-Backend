@@ -6,7 +6,11 @@ async function tambahPatient(req, res) {
   const alamatTujuan = { longi: 112.796251, lat: -7.290800 };
 
   if (!nama || !umur || !jenisPenyakit || !catatan || !kode || !alamatRumah || !alamatTujuan) {
-    return res.status(400).json({ message: 'Semua kolom harus diisi' });
+    return res.status(400).json({
+      status: 400,
+      success: false,
+      error: 'Semua kolom harus diisi'
+    });
   }
 
   try {

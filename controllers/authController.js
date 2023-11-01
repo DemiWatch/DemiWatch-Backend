@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config/config.js');
 
 const register = async (req, res) => {
-  //name dihapus
     const { email, password } = req.body;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
