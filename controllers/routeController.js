@@ -94,14 +94,14 @@ const getLocation = async (req, res) => {
                 status: 200,
                 success: true,
                 message: "Arrived at destination.",
-                location : lastRequestBody
+                location : location
             });
         } else {
             return res.status(200).json({
                 status: 200,
                 success: true,
                 message: "On the way to destination.",
-                location : lastRequestBody
+                location : location
             });
         }       
     } else {
