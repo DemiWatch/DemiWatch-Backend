@@ -4,7 +4,7 @@ const routeController = require('../controllers/routeController');
 const authenticate = require('../middleware/authMiddleware');
 
 router.get('/getRoute', routeController.getRoute);
-router.post('/liveLocation',authenticate, routeController.liveLocation);
-router.get('/getLocation', routeController.getLocation);
+router.post('/liveLocation', routeController.liveLocation);
+router.get('/getLocation',authenticate, routeController.getLocation);
 
 module.exports = router;
