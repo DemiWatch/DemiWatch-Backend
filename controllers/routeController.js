@@ -59,6 +59,7 @@ const liveLocation = async (req, res) => {
 
     lastLocation = { longitude, latitude };
     lastKode = kode;
+    lastRequestBody = req.body;
 
     return res.status(200).json({
         status: 200,
@@ -92,13 +93,15 @@ const getLocation = async (req, res) => {
             return res.status(200).json({
                 status: 200,
                 success: true,
-                message: "Arrived at destination."
+                message: "Arrived at destination.",
+                lastRequestBody : lastRequestBody
             });
         } else {
             return res.status(200).json({
                 status: 200,
                 success: true,
-                message: "On the way to destination."
+                message: "On the way to destination.",
+                lastRequestBody : lastRequestBody
             });
         }       
     } else {
