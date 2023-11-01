@@ -5,8 +5,10 @@ const { getPatientByKode } = require('../controllers/patientController');
 const {haversineDistance } = require('../utils/distanceUtils');
 
 const getRoute = async (req, res) => {
-    const { coordinates } = req.query;
-
+    const alamatRumah = { longi: 112.796075, lat: -7.284068 };
+    const alamatTujuan = { longi: 112.796251, lat: -7.290800 };
+    // const { coordinates } = req.query;
+    const coordinates = `${alamatRumah.longi},${alamatRumah.lat};${alamatTujuan.longi},${alamatTujuan.lat}`;
     if (!coordinates || typeof coordinates !== 'string') {
         return res.status(400).json({
             status : 400,
