@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const JWT_SECRET = process.env.JWT_SECRET;
+// const JWT_SECRET = process.env.JWT_SECRET;
 const DB_URI = process.env.DB_URI; 
 mongoose.connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -11,4 +11,4 @@ db.once('open', () => {
 });
 
 
-module.exports = { mongoose, db, jwtSecret: JWT_SECRET };
+module.exports = { mongoose, db, jwtSecret: process.env.JWT_SECRET };
