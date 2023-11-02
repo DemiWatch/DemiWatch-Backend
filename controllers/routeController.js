@@ -34,6 +34,8 @@ const getRoute = async (req, res) => {
     }
 };
 
+let lastLocation = null;
+let lastKode = null;
 const liveLocation = async (req, res) => {
     const { longitude, latitude, kode } = req.body;
 
@@ -66,7 +68,8 @@ const liveLocation = async (req, res) => {
 };
 
 const getLocation = async (req, res) => {
-    const patientData = await getPatientByKode(lastKode || kode);
+    const { kode } = req.params;
+    const patientData = await getPatientByKode(kode);
     if (!patientData) {
         return res.status(404).json({
             status: 404,
@@ -97,11 +100,20 @@ const getLocation = async (req, res) => {
 
     const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
 
+    const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
+
     if (distanceToDestination <= 0.05) {
         return res.status(200).json({
             status: 200,
             success: true,
             message: "Arrived at destination.",
+            location: lastLocation
+        });
+    } else if (distanceFromStart <= 0.05) {
+        return res.status(200).json({
+            status: 200,
+            success: true,
+            message: "At home",
             location: lastLocation
         });
     } else {
@@ -113,6 +125,7 @@ const getLocation = async (req, res) => {
         });
     }       
 };
+
 
 
 

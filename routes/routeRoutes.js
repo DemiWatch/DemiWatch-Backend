@@ -5,6 +5,6 @@ const authenticate = require('../middleware/authMiddleware');
 
 router.get('/getRoute', routeController.getRoute);
 router.post('/liveLocation', routeController.liveLocation);
-router.get('/getLocation',authenticate, routeController.getLocation);
+router.get('/getLocation/:kode',authenticate, routeController.getLocation);
 
 module.exports = router;
