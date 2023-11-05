@@ -3,11 +3,19 @@ const qs = require('qs');
 const ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 const { getPatientByKode } = require('../controllers/patientController');
 const {haversineDistance } = require('../utils/distanceUtils');
+const { getManeuvers} = require('../utils/responseUtils');
 
 const getRoute = async (req, res) => {
     const alamatRumah = { longi: 112.796075, lat: -7.284068 };
     const alamatTujuan = { longi: 112.796251, lat: -7.290800 };
     // const { coordinates } = req.query;
+    // if (!lastLocation && patientData.alamatRumah) {
+    //     lastLocation = {
+    //         longitude: patientData.alamatRumah.longi,
+    //         latitude: patientData.alamatRumah.lat
+    //     };
+    // }
+
     const coordinates = `${alamatRumah.longi},${alamatRumah.lat};${alamatTujuan.longi},${alamatTujuan.lat}`;
     if (!coordinates || typeof coordinates !== 'string') {
         return res.status(400).json({
@@ -19,11 +27,12 @@ const getRoute = async (req, res) => {
 
     try {
         const response = await axios.get(`https://api.mapbox.com/directions/v5/mapbox/walking/${coordinates}?alternatives=true&continue_straight=true&geometries=geojson&language=id&overview=simplified&steps=true&access_token=${ACCESS_TOKEN}`);
-        
+        const data = getManeuvers(response.data.routes);
+        // const data = response.data.routes[0].legs[0].steps[0].maneuver;
         return res.status(200).json({
             status : 200,
             success: true,
-            data: response.data
+            data: data
         });
     } catch (error) {
         return res.status(500).json({ 
@@ -33,7 +42,6 @@ const getRoute = async (req, res) => {
         });
     }
 };
-
 let lastLocation = null;
 let lastKode = null;
 const liveLocation = async (req, res) => {
