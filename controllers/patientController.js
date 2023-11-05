@@ -44,7 +44,11 @@ async function getPatient(req, res) {
     const dataPatient = await Patient.findById(id);
 
     if (!dataPatient) {
-      return res.status(404).json({ message: 'Data pasien tidak ditemukan' });
+      return res.status(404).json({
+        status: 500,
+        success: false,
+        error: 'Data pasien tidak ditemukan'
+      });
     }
 
     res.json({ data: dataPatient });
@@ -52,7 +56,7 @@ async function getPatient(req, res) {
     res.status(500).json({
       status: 500,
       success: false,
-      message: 'Terjadi kesalahan saat mengambil data pasien'
+      error: 'Terjadi kesalahan saat mengambil data pasien'
     });
   }
 }
@@ -77,7 +81,7 @@ async function updatePatient(req, res){
       return res.status(404).json({
         status: 404,
         success: false,
-        message: 'Data pasien tidak ditemukan'
+        error: 'Data pasien tidak ditemukan'
       });
     }
 
@@ -89,7 +93,7 @@ async function updatePatient(req, res){
     res.status(500).json({
       status: 500,
       success: false,
-      message: 'Terjadi kesalahan saat memperbarui data pasien'
+      error: 'Terjadi kesalahan saat memperbarui data pasien'
     });
   }
 }
