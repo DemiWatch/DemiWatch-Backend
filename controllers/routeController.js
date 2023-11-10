@@ -6,8 +6,8 @@ const {haversineDistance } = require('../utils/distanceUtils');
 const { getManeuvers} = require('../utils/responseUtils');
 
 const getRoute = async (req, res) => {
-    const alamatRumah = { longi: 112.796075, lat: -7.284068 };
-    const alamatTujuan = { longi: 112.796251, lat: -7.290800 };
+    const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
+    const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
     // const { coordinates } = req.query;
     // if (!lastLocation && patientData.alamatRumah) {
     //     lastLocation = {
@@ -44,6 +44,7 @@ const getRoute = async (req, res) => {
 };
 let lastLocation = null;
 let lastKode = null;
+//POST from hardware
 const liveLocation = async (req, res) => {
     const { longitude, latitude, kode } = req.body;
 
@@ -75,6 +76,7 @@ const liveLocation = async (req, res) => {
     });
 };
 
+//GET from hardware, for app
 const getLocation = async (req, res) => {
     const { kode } = req.params;
     const patientData = await getPatientByKode(kode);

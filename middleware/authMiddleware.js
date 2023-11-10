@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config/config.js');
+const util = require('util');
+const dbConfig = require('../config/config.js');
 
 const authenticate = (req, res, next) => {
     const token = req.header('Authorization') ? req.header('Authorization').replace('Bearer ', '') : null;

@@ -2,14 +2,14 @@ const Patient = require('../models/patientModel.js');
 
 async function tambahPatient(req, res) {
   const { nama, umur, jenisPenyakit, catatan, kode } = req.body;
-  const alamatRumah = { longi: 112.796075, lat: -7.284068 };
-  const alamatTujuan = { longi: 112.796251, lat: -7.290800 };
+  const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
+  const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
 
   if (!nama || !umur || !jenisPenyakit || !catatan || !kode || !alamatRumah || !alamatTujuan) {
     return res.status(400).json({
       status: 400,
       success: false,
-      error: 'Semua kolom harus diisi'
+      error: 'Each column must be filled in'
     });
   }
 
@@ -22,17 +22,18 @@ async function tambahPatient(req, res) {
       kode,
       alamatRumah,
       alamatTujuan,
+      url
     });
 
     res.status(201).json({
-      message: 'Data pasien berhasil disimpan', 
+      message: 'Patient data saved successfully', 
       data: dataPatient 
     });
   } catch (error) {
     return res.status(500).json({
       status: 500,
       success: false,
-      error: "Terjadi kesalahan saat menyimpan data pasien"
+      error: "An error occurred while saving patient data"
     });
   }
 }
@@ -45,9 +46,9 @@ async function getPatient(req, res) {
 
     if (!dataPatient) {
       return res.status(404).json({
-        status: 500,
+        status: 404,
         success: false,
-        error: 'Data pasien tidak ditemukan'
+        error: 'Patient data not found'
       });
     }
 
@@ -56,7 +57,7 @@ async function getPatient(req, res) {
     res.status(500).json({
       status: 500,
       success: false,
-      error: 'Terjadi kesalahan saat mengambil data pasien'
+      error: 'An error occurred while retrieving patient data'
     });
   }
 }
@@ -81,19 +82,19 @@ async function updatePatient(req, res){
       return res.status(404).json({
         status: 404,
         success: false,
-        error: 'Data pasien tidak ditemukan'
+        error: 'Patient data not found'
       });
     }
 
     res.json({
-      message: 'Data pasien berhasil diperbarui',
+      message: 'Patient data is updated successfully',
       data: updatedPatient
     });
   } catch (error) {
     res.status(500).json({
       status: 500,
       success: false,
-      error: 'Terjadi kesalahan saat memperbarui data pasien'
+      error: 'An error occurred while updating patient data'
     });
   }
 }

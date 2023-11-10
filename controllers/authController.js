@@ -29,6 +29,7 @@ const register = async (req, res) => {
       const user = await User.create({ email, password: hashedPassword });
       return res.status(200).json({
         status: 200,
+        id: user._id,
         success: true,
         message: 'User registered successfully'
       });
@@ -64,6 +65,7 @@ const login = async (req, res) => {
       // });
       return res.status(200).json({
         status: 200,
+        id: user._id,
         success: true,
         token: token,
       });

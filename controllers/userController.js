@@ -8,7 +8,7 @@ async function addUser(req, res) {
       return res.status(400).json({
         status: 400,
         success: false,
-        error: 'Semua kolom harus diisi'
+        error: 'Each column must be filled in'
       });
     }
   
@@ -24,19 +24,19 @@ async function addUser(req, res) {
         return res.status(404).json({
           status: 404,
           success: false,
-          error: "User tidak ditemukan"
+          error: "User not found"
         });
       }
   
       res.status(201).json({
-        message: 'Data user berhasil disimpan',
+        message: 'User data saved successfully',
         data: dataUser
       });
     } catch (error) {
       return res.status(500).json({
         status: 500,
         success: false,
-        error: "Terjadi kesalahan saat menyimpan data user"
+        error: "An error occurred while saving user data"
       });
     }
 }  
@@ -50,7 +50,7 @@ async function getUser(req, res) {
       return res.status(404).json({
         status: 404,
         success: false,
-        error: 'Data pasien tidak ditemukan'
+        error: 'User data not found'
     });
     }
 
@@ -59,7 +59,7 @@ async function getUser(req, res) {
     res.status(500).json({
       status: 500,
       success: false,
-      error: 'Terjadi kesalahan saat mengambil data pasien'
+      error: 'An error occurred while retrieving user data'
     });
   }
 }
@@ -79,18 +79,18 @@ async function updateUser(req, res){
       return res.status(404).json({
         status: 404,
         success: false,
-        error: 'Data user tidak ditemukan'
+        error: 'User data not found'
       });
     }
     res.json({
-      message: 'Data user berhasil diperbarui',
+      message: 'User data is updated successfully',
       data: updatedUser
     });
   } catch (error) {
     res.status(500).json({
       status: 500,
       success: false,
-      error: 'Terjadi kesalahan saat memperbarui data pasien'
+      error: 'An error occurred while updating user data'
     });
   }
 }
