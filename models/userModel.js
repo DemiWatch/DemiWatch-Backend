@@ -4,10 +4,10 @@ const userSchema = new mongoose.Schema({
   nama: String,
   email: String,
   password: String,
-  img:{
-    data:Buffer,
-    contentType : String
-  },
+  // img:{
+  //   data:Buffer,
+  //   contentType : String
+  // },
   telepon: String,
   status: String,
   radius: String

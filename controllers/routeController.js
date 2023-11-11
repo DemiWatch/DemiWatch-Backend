@@ -4,7 +4,9 @@ const ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 const { getPatientByKode } = require('../controllers/patientController');
 const {haversineDistance } = require('../utils/distanceUtils');
 const { getManeuvers} = require('../utils/responseUtils');
+const moment = require('moment');
 
+const formattedTimestamp = moment().format('YYYY-MM-DD HH:mm:ss');
 const getRoute = async (req, res) => {
     const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
     const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
@@ -72,7 +74,8 @@ const liveLocation = async (req, res) => {
     return res.status(200).json({
         status: 200,
         success: true,
-        message: "Location updated successfully."
+        message: "Location updated successfully.",
+        timestamp: formattedTimestamp
     });
 };
 
@@ -117,21 +120,24 @@ const getLocation = async (req, res) => {
             status: 200,
             success: true,
             message: "Arrived at destination.",
-            location: lastLocation
+            location: lastLocation,
+            timestamp: formattedTimestamp
         });
     } else if (distanceFromStart <= 0.05) {
         return res.status(200).json({
             status: 200,
             success: true,
             message: "At home",
-            location: lastLocation
+            location: lastLocation,
+            timestamp: formattedTimestamp
         });
     } else {
         return res.status(200).json({
             status: 200,
             success: true,
             message: "On the way to destination.",
-            location: lastLocation
+            location: lastLocation,
+            timestamp: formattedTimestamp
         });
     }       
 };

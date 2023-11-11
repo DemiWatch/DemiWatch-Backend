@@ -21,8 +21,7 @@ async function tambahPatient(req, res) {
       catatan,
       kode,
       alamatRumah,
-      alamatTujuan,
-      url
+      alamatTujuan
     });
 
     res.status(201).json({
