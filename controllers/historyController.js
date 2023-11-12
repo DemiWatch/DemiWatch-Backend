@@ -12,6 +12,8 @@ const history = async (req, res) => {
 
     const totalDurations = calculateTimeDifference(patient.locationHistory);
 
+
+
     // Format the response
     // const historyResponse = patient.locationHistory.map(entry => ({
     //   message: entry.message,
@@ -28,7 +30,7 @@ const history = async (req, res) => {
       alamatTujuan: patient.alamatTujuan,
       tanggal: moment(patient.timestamp).format('YYYY-MM-DD'),
       // history: historyResponse,
-      durations: totalDurations 
+      durations: totalDurations
     });
   } catch (error) {
     return res.status(500).json({
