@@ -31,7 +31,11 @@ const history = async (req, res) => {
       durations: totalDurations 
     });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({
+      status: 500,
+      success: false,
+      error: error.message
+    });
   }
 };
 
