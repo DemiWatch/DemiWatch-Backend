@@ -8,9 +8,13 @@ const calculateTimeDifference = (locationHistory) => {
     if (entry.message === "At home") {
       segmentStart = moment(entry.timestamp).format('YYYY-MM-DD HH:mm:ss')
     } else if (entry.message === "Arrived at destination." && segmentStart) {
-      const duration = moment.duration(moment(entry.timestamp).diff(moment(segmentStart)));
+      const endMoment = moment(entry.timestamp);
+      const duration = moment.duration(endMoment.diff(segmentStart));
+      const hours = Math.floor(duration.asHours());
+      const minutes = duration.minutes();
+      // const duration = moment.duration(moment(entry.timestamp).diff(moment(segmentStart)));
       durations.push({
-        duration: duration.humanize(),
+        duration: `${hours} hours, ${minutes} minutes`,
         start: segmentStart,
         end: moment(entry.timestamp).format('YYYY-MM-DD HH:mm:ss')
       });
