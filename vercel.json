@@ -2,20 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "source": "./index.js",
+      "src": "./index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ],
-  "rewrites":[
-    {
-      "source" : "/api/:path*",
-      "destination" : "https://backend-demiwatch.vercel.app/:path*"
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
 }
