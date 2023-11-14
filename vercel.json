@@ -11,9 +11,5 @@
       "src": "/(.*)",
       "dest": "/"
     }
-  ],
-  "rewrites":[
-    {"source":"/(.*)", "destination": "https://backend-demiwatch.vercel.app/$1"}
-  ],
-  "force" : false
+  ]
 }
