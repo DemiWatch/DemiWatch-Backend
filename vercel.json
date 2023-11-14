@@ -14,8 +14,8 @@
   ],
   "rewrites":[
     {
-      "source" : "/api/:path*",
-      "destination" : "https://backend-demiwatch.vercel.app/:path*"
+      "src" : "/api/:path*",
+      "dest" : "https://backend-demiwatch.vercel.app/:path*"
     }
   ]
 }
