@@ -20,7 +20,7 @@ const calculateTimeDifference = (locationHistory) => {
       durations.push({
         condition,
         duration: `${hours} hours, ${minutes} minutes`,
-        start: segmentStart.format('YYYY-MM-DD HH:mm:ss'),
+        start: segmentStart.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
         end: endMoment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss')
       });
       segmentStart = null;
