@@ -5,7 +5,7 @@ const { getPatientByKode } = require('../controllers/patientController');
 const {haversineDistance } = require('../utils/distanceUtils');
 const { getManeuvers} = require('../utils/responseUtils');
 const Patient = require('../models/patientModel.js');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 
 const getRoute = async (req, res) => {

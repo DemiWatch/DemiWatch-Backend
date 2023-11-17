@@ -1,6 +1,6 @@
 const Patient = require('../models/patientModel.js');
 const { calculateTimeDifference } = require('../utils/calculateTimeDifference.js');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const history = async (req, res) => {
   const { kode } = req.params;
