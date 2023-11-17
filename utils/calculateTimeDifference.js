@@ -3,7 +3,6 @@ const moment = require('moment');
 const calculateTimeDifference = (locationHistory) => {
   const durations = [];
   let segmentStart = null;
-  let condition = "aman";
   
   locationHistory.forEach((entry, index) => {
     if (entry.message === "At home") {
@@ -13,6 +12,7 @@ const calculateTimeDifference = (locationHistory) => {
       const duration = moment.duration(endMoment.diff(segmentStart));
       const hours = Math.floor(duration.asHours());
       const minutes = duration.minutes();
+      let condition = "aman";
       if (duration.asMinutes()>60) {
         condition = "kendala";
       }
@@ -21,7 +21,7 @@ const calculateTimeDifference = (locationHistory) => {
         condition,
         duration: `${hours} hours, ${minutes} minutes`,
         start: segmentStart.format('YYYY-MM-DD HH:mm:ss'),
-        end: endMoment.format('YYYY-MM-DD HH:mm:ss')
+        end: endMoment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss')
       });
       segmentStart = null;
     }

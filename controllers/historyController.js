@@ -28,7 +28,7 @@ const history = async (req, res) => {
       jenisPenyakit: patient.jenisPenyakit,
       alamatRumah: patient.alamatRumah,
       alamatTujuan: patient.alamatTujuan,
-      tanggal: moment(patient.timestamp).format('YYYY-MM-DD'),
+      tanggal: moment(patient.timestamp).tz('Asia/Jakarta').format('YYYY-MM-DD'),
       // history: historyResponse,
       durations: totalDurations
     });

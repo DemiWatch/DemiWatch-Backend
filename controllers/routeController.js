@@ -72,7 +72,7 @@ const liveLocation = async (req, res) => {
     lastKode = kode;
     location = req.body;
 
-    const formattedTimestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+    const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     return res.status(200).json({
         status: 200,
         success: true,
@@ -118,7 +118,7 @@ const getLocation = async (req, res) => {
 
     const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
 
-    const formattedTimestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+    const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     let message = "";
 
     if (distanceToDestination <= 0.05) {
