@@ -28,8 +28,8 @@ const register = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await User.create({ email, password: hashedPassword });
       return res.status(200).json({
-        status: 200,
         id: user._id,
+        status: 200,
         success: true,
         message: 'User registered successfully'
       });
@@ -64,8 +64,8 @@ const login = async (req, res) => {
       //   expiresIn: '1h'
       // });
       return res.status(200).json({
-        status: 200,
         id: user._id,
+        status: 200,
         success: true,
         token: token,
       });

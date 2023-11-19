@@ -24,7 +24,9 @@ async function tambahPatient(req, res) {
       alamatTujuan
     });
 
-    res.status(201).json({
+    res.status(200).json({
+      status: 200,
+      success: true,
       message: 'Patient data saved successfully', 
       data: dataPatient 
     });
@@ -86,6 +88,8 @@ async function updatePatient(req, res){
     }
 
     res.json({
+      status: 200,
+      success: true,
       message: 'Patient data is updated successfully',
       data: updatedPatient
     });

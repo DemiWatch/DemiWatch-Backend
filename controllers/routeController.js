@@ -35,6 +35,7 @@ const getRoute = async (req, res) => {
         return res.status(200).json({
             status : 200,
             success: true,
+            message: 'Successfully get route',
             data: data
         });
     } catch (error) {

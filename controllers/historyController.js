@@ -7,7 +7,12 @@ const history = async (req, res) => {
   try {
     const patient = await Patient.findOne({ kode });
     if (!patient) {
-      return res.status(404).send('Patient not found');
+      // return res.status(404).send('Patient not found');
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        error: 'Patient not found'
+      });
     }
 
     const totalDurations = calculateTimeDifference(patient.locationHistory);

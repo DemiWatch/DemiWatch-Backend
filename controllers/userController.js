@@ -28,7 +28,9 @@ async function addUser(req, res) {
         });
       }
   
-      res.status(201).json({
+      res.status(200).json({
+        status: 200,
+        success: true,
         message: 'User data saved successfully',
         data: dataUser
       });
@@ -83,6 +85,8 @@ async function updateUser(req, res){
       });
     }
     res.json({
+      status: 200,
+      success: true,
       message: 'User data is updated successfully',
       data: updatedUser
     });
