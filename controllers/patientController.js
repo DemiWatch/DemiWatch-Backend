@@ -66,8 +66,8 @@ async function getPatient(req, res) {
 async function updatePatient(req, res){
   const { id } = req.params;
   const { nama, umur, jenisPenyakit, catatan, kode } = req.body;
-  const alamatRumah = { longi: 112.796075, lat: -7.284068 };
-  const alamatTujuan = { longi: 112.796251, lat: -7.290800 };
+  const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
+  const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
   try {
     const updatedPatient = await Patient.findByIdAndUpdate(id, {
       nama,
