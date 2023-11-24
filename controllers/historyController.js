@@ -29,6 +29,7 @@ const history = async (req, res) => {
     return res.status(200).json({
       status: 200,
       success: true,
+      id: patient._id,
       nama: patient.nama,
       jenisPenyakit: patient.jenisPenyakit,
       alamatRumah: patient.alamatRumah,
