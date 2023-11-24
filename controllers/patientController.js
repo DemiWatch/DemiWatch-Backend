@@ -14,6 +14,14 @@ async function tambahPatient(req, res) {
   }
 
   try {
+    const existingKode = await Patient.findOne({ kode });
+    if (existingKode) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        error: 'Kode already used in another device'
+      });
+    }
     const dataPatient = await Patient.create({
       nama,
       umur,
