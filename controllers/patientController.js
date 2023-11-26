@@ -1,20 +1,19 @@
 const Patient = require('../models/patientModel.js');
+const alamatRumah = {
+  name: "Rumah",
+  longi: 112.7912281,
+  lat: -7.289606,
+  desc : "Asrama Mahasiswa ITS, Jl. Teknik Elektro, Keputih, Sukolilo, Surabaya"
+};
+const alamatTujuan = {
+  name: "Supermarket",
+  longi: 112.796251,
+  lat: -7.290800,
+  desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
+};
 
 async function tambahPatient(req, res) {
   const { nama, umur, jenisPenyakit, catatan, kode } = req.body;
-  const alamatRumah = {
-    name: "Rumah",
-    longi: 112.7912281,
-    lat: -7.289606,
-    desc : "Asrama Mahasiswa ITS, Jl. Teknik Elektro, Keputih, Sukolilo, Surabaya"
-  };
-  const alamatTujuan = {
-    name: "Supermarket",
-    longi: 112.796251,
-    lat: -7.290800,
-    desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
-  };
-
   if (!nama || !umur || !jenisPenyakit || !catatan || !kode || !alamatRumah || !alamatTujuan) {
     return res.status(400).json({
       status: 400,
@@ -84,8 +83,8 @@ async function getPatient(req, res) {
 async function updatePatient(req, res){
   const { id } = req.params;
   const { nama, umur, jenisPenyakit, catatan, kode } = req.body;
-  const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
-  const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
+  // const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
+  // const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
   try {
     const updatedPatient = await Patient.findByIdAndUpdate(id, {
       nama,
