@@ -12,6 +12,7 @@ const calculateTimeDifference = (locationHistory) => {
       const duration = moment.duration(endMoment.diff(segmentStart));
       const hours = Math.floor(duration.asHours());
       const minutes = duration.minutes();
+      const seconds = duration.seconds();
       let condition = "aman";
       if (duration.asMinutes()>60) {
         condition = "kendala";
@@ -19,7 +20,7 @@ const calculateTimeDifference = (locationHistory) => {
       // const duration = moment.duration(moment(entry.timestamp).diff(moment(segmentStart)));
       durations.push({
         condition,
-        duration: `${hours} hours, ${minutes} minutes`,
+        duration: `${hours} hours, ${minutes} minutes, ${seconds} seconds`,
         start: segmentStart.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
         end: endMoment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss')
       });
