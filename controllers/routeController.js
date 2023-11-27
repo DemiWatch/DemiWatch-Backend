@@ -88,8 +88,8 @@ const liveLocation = async (req, res) => {
         status: 200,
         success: true,
         message: "Location updated successfully.",
-        alamatRumah: patient.alamatRumah,
-        alamatTujuan: patient.alamatTujuan,
+        alamatRumah: patientData.alamatRumah,
+        alamatTujuan: patientData.alamatTujuan,
         timestamp: formattedTimestamp
     });
 };
