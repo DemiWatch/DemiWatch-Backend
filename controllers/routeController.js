@@ -82,12 +82,29 @@ const liveLocation = async (req, res) => {
     lastLocation = { longitude, latitude };
     lastKode = kode;
     location = req.body;
-
+       const destinationCoords = {
+        longitude: patientData.alamatTujuan.longi,
+        latitude: patientData.alamatTujuan.lat
+    };
+    
+    const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
+    
+    const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
+    
     const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+    let message = "";
+    
+    if (distanceToDestination <= 0.05) {
+        message = "Arrived at destination.";
+    } else if (distanceFromStart <= 0.05) {
+        message = "At home";
+    } else {
+        message = "On the way to destination.";
+    }
     return res.status(200).json({
         status: 200,
         success: true,
-        message: "Location updated successfully.",
+        message,
         alamatRumah: patientData.alamatRumah,
         alamatTujuan: patientData.alamatTujuan,
         timestamp: formattedTimestamp
