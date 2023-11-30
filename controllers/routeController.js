@@ -9,19 +9,19 @@ const moment = require('moment-timezone');
 
 
 const getRoute = async (req, res) => {
-    const alamatRumah = {
-        name: "Rumah",
-        longi: 112.7912281,
-        lat: -7.289606,
-        desc : "Asrama Mahasiswa ITS, Jl. Teknik Elektro, Keputih, Sukolilo, Surabaya"
-    };
-    const alamatTujuan = {
-        name: "Supermarket",
-        longi: 112.796251,
-        lat: -7.290800,
-        desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
-    };
-    // const { coordinates } = req.query;
+    // const alamatRumah = {
+    //     name: "Rumah",
+    //     longi: 112.7912281,
+    //     lat: -7.289606,
+    //     desc : "Asrama Mahasiswa ITS, Jl. Teknik Elektro, Keputih, Sukolilo, Surabaya"
+    // };
+    // const alamatTujuan = {
+    //     name: "Supermarket",
+    //     longi: 112.796251,
+    //     lat: -7.290800,
+    //     desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
+    // };
+    const { coordinates } = req.query;
     // if (!lastLocation && patientData.alamatRumah) {
     //     lastLocation = {
     //         longitude: patientData.alamatRumah.longi,
@@ -29,7 +29,7 @@ const getRoute = async (req, res) => {
     //     };
     // }
 
-    const coordinates = `${alamatRumah.longi},${alamatRumah.lat};${alamatTujuan.longi},${alamatTujuan.lat}`;
+    // const coordinates = `${alamatRumah.longi},${alamatRumah.lat};${alamatTujuan.longi},${alamatTujuan.lat}`;
     if (!coordinates || typeof coordinates !== 'string') {
         return res.status(400).json({
             status : 400,
