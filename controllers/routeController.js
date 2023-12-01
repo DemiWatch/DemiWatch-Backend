@@ -61,7 +61,7 @@ let lastKode = null;
 let emergencyState = false;
 //POST from hardware
 const liveLocation = async (req, res) => {
-    const { longitude, latitude, kode } = req.body;
+    const { longitude, latitude, kode, emergency } = req.body;
 
     if (!latitude || !longitude || typeof latitude !== 'number' || typeof longitude !== 'number') {
         return res.status(400).json({
