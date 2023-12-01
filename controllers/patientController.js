@@ -1,19 +1,19 @@
 const Patient = require('../models/patientModel.js');
-const alamatRumah = {
-  name: "Rumah",
-  longi: 112.7912281,
-  lat: -7.289606,
-  desc : "Asrama Mahasiswa ITS, Jl. Teknik Elektro, Keputih, Sukolilo, Surabaya"
-};
-const alamatTujuan = {
-  name: "Supermarket",
-  longi: 112.796251,
-  lat: -7.290800,
-  desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
-};
+// const alamatRumah = {
+//   name: "Rumah",
+//   longi: 112.7912281,
+//   lat: -7.289606,
+//   desc : "Asrama Mahasiswa ITS, Jl. Teknik Elektro, Keputih, Sukolilo, Surabaya"
+// };
+// const alamatTujuan = {
+//   name: "Supermarket",
+//   longi: 112.796251,
+//   lat: -7.290800,
+//   desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
+// };
 
 async function tambahPatient(req, res) {
-  const { nama, umur, jenisPenyakit, catatan, kode } = req.body;
+  const { nama, umur, jenisPenyakit, catatan, kode, alamatRumah, alamatTujuan } = req.body;
   if (!nama || !umur || !jenisPenyakit || !catatan || !kode || !alamatRumah || !alamatTujuan) {
     return res.status(400).json({
       status: 400,
@@ -69,8 +69,12 @@ async function getPatient(req, res) {
         error: 'Patient data not found'
       });
     }
-
-    res.json({ data: dataPatient });
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: 'Successfully get data patient',
+      data: dataPatient
+    });
   } catch (error) {
     res.status(500).json({
       status: 500,
@@ -82,7 +86,7 @@ async function getPatient(req, res) {
 
 async function updatePatient(req, res){
   const { id } = req.params;
-  const { nama, umur, jenisPenyakit, catatan, kode } = req.body;
+  const { nama, umur, jenisPenyakit, catatan, alamatRumah, alamatTujuan } = req.body;
   // const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
   // const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
   try {

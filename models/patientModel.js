@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
-
+const locationSchema = new mongoose.Schema({
+  longitude: Number,
+  latitude: Number,
+});
 const locationHistorySchema = new mongoose.Schema({
   message: String,
-  location: {
-    longi: Number,
-    lat: Number
-  },
+  location: {type: locationSchema, required: true},
   timestamp: { type: Date, default: Date.now },
   newLog: { type: Boolean, default: false }
 });
@@ -15,10 +15,6 @@ const patientSchema = new mongoose.Schema({
   jenisPenyakit: String,
   catatan: String,
   kode: String,
-  // img:{
-  //   data:Buffer,
-  //   contentType : String
-  // },
   alamatRumah: {
     name : String,
     longi: Number,

@@ -22,14 +22,6 @@ const getRoute = async (req, res) => {
     //     desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
     // };
     const { coordinates } = req.query;
-    // if (!lastLocation && patientData.alamatRumah) {
-    //     lastLocation = {
-    //         longitude: patientData.alamatRumah.longi,
-    //         latitude: patientData.alamatRumah.lat
-    //     };
-    // }
-
-    // const coordinates = `${alamatRumah.longi},${alamatRumah.lat};${alamatTujuan.longi},${alamatTujuan.lat}`;
     if (!coordinates || typeof coordinates !== 'string') {
         return res.status(400).json({
             status : 400,
@@ -41,7 +33,6 @@ const getRoute = async (req, res) => {
     try {
         const response = await axios.get(`https://api.mapbox.com/directions/v5/mapbox/walking/${coordinates}?alternatives=true&continue_straight=true&geometries=geojson&language=id&overview=simplified&steps=true&access_token=${ACCESS_TOKEN}`);
         const data = getManeuvers(response.data.routes);
-        // const data = response.data.routes[0].legs[0].steps[0].maneuver;
         return res.status(200).json({
             status : 200,
             success: true,
@@ -59,10 +50,10 @@ const getRoute = async (req, res) => {
 let lastLocation = null;
 let lastKode = null;
 let emergencyState = false;
+
 //POST from hardware
 const liveLocation = async (req, res) => {
     const { longitude, latitude, kode, emergency } = req.body;
-
     if (!latitude || !longitude || typeof latitude !== 'number' || typeof longitude !== 'number') {
         return res.status(400).json({
             status: 400,

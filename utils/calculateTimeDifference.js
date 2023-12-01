@@ -17,7 +17,6 @@ const calculateTimeDifference = (locationHistory) => {
       if (duration.asMinutes()>60) {
         condition = "kendala";
       }
-      // const duration = moment.duration(moment(entry.timestamp).diff(moment(segmentStart)));
       durations.push({
         condition,
         duration: `${hours} hours, ${minutes} minutes, ${seconds} seconds`,
