@@ -93,8 +93,11 @@ const liveLocation = async (req, res) => {
     
     const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     let message = "";
-    
-    if (distanceToDestination <= 0.05) {
+    emergencyState = emergency === "true";
+
+    if (emergencyState) {
+        message = "Emergency button pressed.";
+    } else if (distanceToDestination <= 0.05) {
         message = "Arrived at destination.";
     } else if (distanceFromStart <= 0.05) {
         message = "At home";
@@ -105,6 +108,7 @@ const liveLocation = async (req, res) => {
         status: 200,
         success: true,
         message,
+        emergency: emergencyState ? "true" : "false",
         alamatRumah: patientData.alamatRumah,
         alamatTujuan: patientData.alamatTujuan,
         timestamp: formattedTimestamp
@@ -150,8 +154,9 @@ const getLocation = async (req, res) => {
 
     const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     let message = "";
-
-    if (distanceToDestination <= 0.05) {
+    if (emergencyState) {
+        message = "Emergency button pressed.";
+    } else if (distanceToDestination <= 0.05) {
         message = "Arrived at destination.";
     } else if (distanceFromStart <= 0.05) {
         message = "At home";
@@ -159,18 +164,19 @@ const getLocation = async (req, res) => {
         message = "On the way to destination.";
     }
 
-    await saveLocationHistoryToDatabase(kode, message, lastLocation, formattedTimestamp);
+    await saveLocationHistoryToDatabase(kode, message, emergencyState, lastLocation, formattedTimestamp);
 
     return res.status(200).json({
         status: 200,
         success: true,
         message,
+        emergency: emergencyState ? "true" : "false",
         location: lastLocation,
         timestamp: formattedTimestamp
     });
 };
 
-const saveLocationHistoryToDatabase = async (kode, message, lastLocation, timestamp) => {
+const saveLocationHistoryToDatabase = async (kode, message, emergencyState, lastLocation, timestamp) => {
     try {
         const updatedPatient = await Patient.findOneAndUpdate(
             { kode: kode },
@@ -178,6 +184,7 @@ const saveLocationHistoryToDatabase = async (kode, message, lastLocation, timest
                 $push: {
                     locationHistory: {
                         message,
+                        emergency: emergencyState ? "true" : "false",
                         location: lastLocation,
                         timestamp
                     }
