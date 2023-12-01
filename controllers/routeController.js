@@ -58,6 +58,7 @@ const getRoute = async (req, res) => {
 };
 let lastLocation = null;
 let lastKode = null;
+let emergencyState = false;
 //POST from hardware
 const liveLocation = async (req, res) => {
     const { longitude, latitude, kode } = req.body;
