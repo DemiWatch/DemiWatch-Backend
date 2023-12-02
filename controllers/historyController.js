@@ -14,14 +14,16 @@ const history = async (req, res) => {
       });
     }
     const calculateTimeDifference = (locationHistory) => {
-      const durations = [];
-      let segmentStart = null;
-      // const liveLocation = lastLocation;
+      const durations = []
+      let segmentStart = null
+      let startLocation = null
       locationHistory.forEach((entry, index) => {
         if (entry.message === "At home") {
           segmentStart = moment(entry.timestamp)
+          startLocation = entry.location
         } else if (entry.message === "Arrived at destination." && segmentStart) {
           const endMoment = moment(entry.timestamp);
+          const endLocation = entry.location
           const duration = moment.duration(endMoment.diff(segmentStart));
           const hours = Math.floor(duration.asHours());
           const minutes = duration.minutes();
@@ -35,6 +37,8 @@ const history = async (req, res) => {
             duration: `${hours} hours, ${minutes} minutes, ${seconds} seconds`,
             start: segmentStart.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
             end: endMoment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
+            startLocation,
+            endLocation
           });
           segmentStart = null;
         }
@@ -51,10 +55,7 @@ const history = async (req, res) => {
       id: patient._id,
       nama: patient.nama,
       jenisPenyakit: patient.jenisPenyakit,
-      // alamatRumah: patient.alamatRumah,
-      // alamatTujuan: patient.alamatTujuan,
-      // history: historyResponse,
-      durations: totalDurations
+      durations: totalDurations,
     });
   } catch (error) {
     return res.status(500).json({
