@@ -5,6 +5,7 @@ const { getPatientByKode } = require('../controllers/patientController');
 const {haversineDistance } = require('../utils/distanceUtils');
 const { getManeuvers} = require('../utils/responseUtils');
 const Patient = require('../models/patientModel.js');
+const History = require('../models/historyModel.js');
 const moment = require('moment-timezone');
 
 
@@ -61,50 +62,90 @@ const liveLocation = async (req, res) => {
             error: "Invalid coordinates provided, must include 'latitude' and 'longitude' as numbers."
         });
     }
-
-    const patientData = await getPatientByKode(kode);
-    if (!patientData || !patientData.alamatTujuan) {
-        return res.status(404).json({
-            status: 404,
-            success: false,
-            error: "Patient data not found or destination address missing."
+    try {
+        const patientData = await getPatientByKode(kode);
+        if (!patientData || !patientData.alamatTujuan) {
+            return res.status(404).json({
+                status: 404,
+                success: false,
+                error: "Patient data not found or destination address missing."
+            });
+        }
+    
+        lastLocation = { longitude, latitude };
+        lastKode = kode;
+        location = req.body;
+           const destinationCoords = {
+            longitude: patientData.alamatTujuan.longi,
+            latitude: patientData.alamatTujuan.lat
+        };
+        
+        const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
+        
+        const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
+        
+        let message = "";
+        emergencyState = emergency === "true";
+        
+        if (emergencyState) {
+            message = "Emergency button pressed.";
+        } else if (distanceToDestination <= 0.05) {
+            message = "Arrived at destination.";
+        } else if (distanceFromStart <= 0.05) {
+            message = "At home";
+        } else {
+            message = "On the way to destination.";
+        }
+        const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss')
+        let historyRecord = await History.findOne({ kode });
+        if (!historyRecord) {
+        historyRecord = await History.create({
+            kode,
+            locationHistory: [{
+                message,
+                alamatRumah: patientData.alamatRumah,
+                alamatTujuan: patientData.alamatTujuan,
+                location: lastLocation,
+                timestamp: formattedTimestamp,
+                emergency: emergencyState
+            }]
+        })
+        } else {
+            historyRecord = await History.findOneAndUpdate(
+                { kode: kode },
+                {
+                    $push: {
+                        locationHistory: {
+                            message,
+                            alamatRumah : patientData.alamatRumah,
+                            alamatTujuan : patientData.alamatTujuan,
+                            location: lastLocation,
+                            timestamp: formattedTimestamp,
+                            emergency: emergencyState
+                        }
+                    }
+                },
+                { new: true }
+            );
+        }    
+        return res.status(200).json({
+            status: 200,
+            success: true,
+            kode,
+            message,
+            emergency: emergencyState ? "true" : "false",
+            alamatRumah :patientData.alamatRumah,
+            alamatTujuan: patientData.alamatTujuan,
+            location : lastLocation,
+            timestamp : formattedTimestamp
         });
-    }
-
-    lastLocation = { longitude, latitude };
-    lastKode = kode;
-    location = req.body;
-       const destinationCoords = {
-        longitude: patientData.alamatTujuan.longi,
-        latitude: patientData.alamatTujuan.lat
-    };
-    
-    const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
-    
-    const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
-    
-    const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
-    let message = "";
-    emergencyState = emergency === "true";
-
-    if (emergencyState) {
-        message = "Emergency button pressed.";
-    } else if (distanceToDestination <= 0.05) {
-        message = "Arrived at destination.";
-    } else if (distanceFromStart <= 0.05) {
-        message = "At home";
-    } else {
-        message = "On the way to destination.";
-    }
-    return res.status(200).json({
-        status: 200,
-        success: true,
-        message,
-        emergency: emergencyState ? "true" : "false",
-        alamatRumah: patientData.alamatRumah,
-        alamatTujuan: patientData.alamatTujuan,
-        timestamp: formattedTimestamp
-    });
+    } catch (error) {
+        return res.status(500).json({
+          status: 500,
+          success: false,
+          error: "An error occurred while saving history data"
+        });
+    }  
 };
 
 //GET from hardware, for app
@@ -118,13 +159,6 @@ const getLocation = async (req, res) => {
             success: false,
             error: "Patient data not found."
         });
-    }
-
-    if (!lastLocation && patientData.alamatRumah) {
-        lastLocation = {
-            longitude: patientData.alamatRumah.longi,
-            latitude: patientData.alamatRumah.lat
-        };
     }
 
     if (!lastLocation) {
@@ -146,6 +180,7 @@ const getLocation = async (req, res) => {
 
     const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     let message = "";
+
     if (emergencyState) {
         message = "Emergency button pressed.";
     } else if (distanceToDestination <= 0.05) {
@@ -156,8 +191,6 @@ const getLocation = async (req, res) => {
         message = "On the way to destination.";
     }
 
-    await saveLocationHistoryToDatabase(kode, message, emergencyState, lastLocation, formattedTimestamp);
-
     return res.status(200).json({
         status: 200,
         success: true,
@@ -167,34 +200,6 @@ const getLocation = async (req, res) => {
         timestamp: formattedTimestamp
     });
 };
-
-const saveLocationHistoryToDatabase = async (kode, message, emergencyState, lastLocation, timestamp) => {
-    try {
-        const updatedPatient = await Patient.findOneAndUpdate(
-            { kode: kode },
-            {
-                $push: {
-                    locationHistory: {
-                        message,
-                        emergency: emergencyState ? "true" : "false",
-                        location: lastLocation,
-                        timestamp
-                    }
-                }
-            },
-            { new: true }
-        );
-
-        if (!updatedPatient) {
-            console.error('Failed to update patient with location history');
-        }
-    } catch (error) {
-        console.error('An error occurred while saving location history:', error);
-    }
-};
-
-
-
 
 module.exports = {
     getRoute, liveLocation, getLocation
