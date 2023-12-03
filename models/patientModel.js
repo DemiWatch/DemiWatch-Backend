@@ -1,14 +1,4 @@
 const mongoose = require('mongoose');
-const locationSchema = new mongoose.Schema({
-  longitude: Number,
-  latitude: Number,
-});
-const locationHistorySchema = new mongoose.Schema({
-  message: String,
-  location: {type: locationSchema, required: true},
-  timestamp: { type: Date, default: Date.now },
-  newLog: { type: Boolean, default: false }
-});
 const patientSchema = new mongoose.Schema({
   nama: String,
   umur: Number,
@@ -25,7 +15,11 @@ const patientSchema = new mongoose.Schema({
     longi: Number,
     lat: Number
   },
-  locationHistory:[locationHistorySchema]
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  }
 });
 
 const Patient = mongoose.model('Patient', patientSchema);

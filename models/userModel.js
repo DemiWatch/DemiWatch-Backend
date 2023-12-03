@@ -6,7 +6,11 @@ const userSchema = new mongoose.Schema({
   password: String,
   telepon: String,
   status: String,
-  radius: String
+  radius: String,
+  patients: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Patient'
+  }]
 });
 
 const User = mongoose.model('User', userSchema);

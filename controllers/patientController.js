@@ -1,16 +1,5 @@
 const Patient = require('../models/patientModel.js');
-// const alamatRumah = {
-//   name: "Rumah",
-//   longi: 112.7912281,
-//   lat: -7.289606,
-//   desc : "Asrama Mahasiswa ITS, Jl. Teknik Elektro, Keputih, Sukolilo, Surabaya"
-// };
-// const alamatTujuan = {
-//   name: "Supermarket",
-//   longi: 112.796251,
-//   lat: -7.290800,
-//   desc: "Jl. Arief Rahman Hakim No.32, Keputih, Kec. Sukolilo, Surabaya"
-// };
+const User = require('../models/userModel.js');
 
 async function tambahPatient(req, res) {
   const { nama, umur, jenisPenyakit, catatan, kode, alamatRumah, alamatTujuan } = req.body;
@@ -31,6 +20,14 @@ async function tambahPatient(req, res) {
         error: 'Kode already used in another device'
       });
     }
+    const user = await User.findById(req.user.userId);
+    if (user.patients.length >= 1) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        error: 'You already have a patient. Cannot add more than one patient.'
+      });
+    }
     const dataPatient = await Patient.create({
       nama,
       umur,
@@ -38,16 +35,30 @@ async function tambahPatient(req, res) {
       catatan,
       kode,
       alamatRumah,
-      alamatTujuan
+      alamatTujuan,
+      createdBy: req.user.userId
     });
+    // const user = await User.findByIdAndUpdate(
+    //   req.user.userId,
+    //   { $push: { patients: dataPatient._id } },
+    //   { new: true }
+    // );
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.userId,
+      { $set: { patients: [dataPatient._id] } }, // Menggunakan $set untuk mengganti array patients
+      { new: true }
+    );
+
 
     res.status(200).json({
       status: 200,
       success: true,
       message: 'Patient data saved successfully', 
-      data: dataPatient 
+      data: dataPatient,
+      user : {nama: updatedUser.nama, email: updatedUser.email}
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       status: 500,
       success: false,
@@ -69,6 +80,13 @@ async function getPatient(req, res) {
         error: 'Patient data not found'
       });
     }
+    if (dataPatient.createdBy.toString() !== req.user.userId) {
+      return res.status(403).json({
+        status: 403,
+        success: false,
+        error: 'You do not have permission to access this patient data'
+      });
+    }
     res.status(200).json({
       status: 200,
       success: true,
@@ -86,10 +104,24 @@ async function getPatient(req, res) {
 
 async function updatePatient(req, res){
   const { id } = req.params;
-  const { nama, umur, jenisPenyakit, catatan, alamatRumah, alamatTujuan } = req.body;
-  // const alamatRumah = { name: "Rumah", longi: 112.796075, lat: -7.284068 };
-  // const alamatTujuan = { name: "FTE", longi: 112.796251, lat: -7.290800 };
+  const { nama, umur, jenisPenyakit, catatan, kode, alamatRumah, alamatTujuan } = req.body;
   try {
+    const existingPatient = await Patient.findById(id);
+    if (!existingPatient) {
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        error: 'Patient data not found'
+      });
+    }
+
+    if (existingPatient.createdBy.toString() !== req.user.userId) {
+      return res.status(403).json({
+        status: 403,
+        success: false,
+        error: 'You do not have permission to update this patient data'
+      });
+    }
     const updatedPatient = await Patient.findByIdAndUpdate(id, {
       nama,
       umur,
