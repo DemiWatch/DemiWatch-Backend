@@ -187,7 +187,7 @@ const getLocation = async (req, res) => {
     
         const distanceFromStart = haversineDistance(latestLocation.location.longitude, latestLocation.location.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
     
-        const formattedTimestamp = moment.utc(latestLocation.timestamp).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+        const formattedTimestamp = moment(latestLocation.timestamp).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
         let message = "";
     
         if (emergencyState) {
