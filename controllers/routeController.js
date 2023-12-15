@@ -177,16 +177,17 @@ const getLocation = async (req, res) => {
                 error: "Location data not available."
             });
         }
+        const latestLocation = history.locationHistory[history.locationHistory.length - 1];
         const destinationCoords = {
             longitude: patientData.alamatTujuan.longi,
             latitude: patientData.alamatTujuan.lat
         };
     
-        const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
+        const distanceToDestination = haversineDistance(latestLocation.location.longitude, latestLocation.location.latitude, destinationCoords.longitude, destinationCoords.latitude);
     
-        const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
+        const distanceFromStart = haversineDistance(latestLocation.location.longitude, latestLocation.location.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
     
-        const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+        const formattedTimestamp = moment(latestLocation.timestamp).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
         let message = "";
     
         if (emergencyState) {
@@ -204,7 +205,7 @@ const getLocation = async (req, res) => {
             success: true,
             message,
             emergency: emergencyState ? "true" : "false",
-            location: lastLocation,
+            location: latestLocation.location,
             timestamp: formattedTimestamp
         });
     } catch{
