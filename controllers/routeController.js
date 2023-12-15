@@ -161,44 +161,59 @@ const getLocation = async (req, res) => {
         });
     }
 
-    if (!lastLocation) {
-        return res.status(404).json({
-            status: 404,
+    // if (!lastLocation) {
+    //     return res.status(404).json({
+    //         status: 404,
+    //         success: false,
+    //         error: "Location data not available."
+    //     });
+    // }
+    try{
+        const history = await History.findOne({ kode }).exec();
+        if (!history || !history.locationHistory || history.locationHistory.length === 0) {
+            return res.status(404).json({
+                status: 404,
+                success: false,
+                error: "Location data not available."
+            });
+        }
+        const destinationCoords = {
+            longitude: patientData.alamatTujuan.longi,
+            latitude: patientData.alamatTujuan.lat
+        };
+    
+        const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
+    
+        const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
+    
+        const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+        let message = "";
+    
+        if (emergencyState) {
+            message = "Emergency button pressed.";
+        } else if (distanceToDestination <= 0.05) {
+            message = "Arrived at destination.";
+        } else if (distanceFromStart <= 0.05) {
+            message = "At home";
+        } else {
+            message = "On the way to destination.";
+        }
+    
+        return res.status(200).json({
+            status: 200,
+            success: true,
+            message,
+            emergency: emergencyState ? "true" : "false",
+            location: lastLocation,
+            timestamp: formattedTimestamp
+        });
+    } catch{
+        return res.status(500).json({
+            status: 500,
             success: false,
-            error: "Location data not available."
+            error: "An error occurred while fetching location data."
         });
     }
-
-    const destinationCoords = {
-        longitude: patientData.alamatTujuan.longi,
-        latitude: patientData.alamatTujuan.lat
-    };
-
-    const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
-
-    const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
-
-    const formattedTimestamp = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
-    let message = "";
-
-    if (emergencyState) {
-        message = "Emergency button pressed.";
-    } else if (distanceToDestination <= 0.05) {
-        message = "Arrived at destination.";
-    } else if (distanceFromStart <= 0.05) {
-        message = "At home";
-    } else {
-        message = "On the way to destination.";
-    }
-
-    return res.status(200).json({
-        status: 200,
-        success: true,
-        message,
-        emergency: emergencyState ? "true" : "false",
-        location: lastLocation,
-        timestamp: formattedTimestamp
-    });
 };
 
 module.exports = {
