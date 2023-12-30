@@ -55,7 +55,9 @@ let emergencyState = false;
 //POST from hardware
 const liveLocation = async (req, res) => {
     const { longi, lat, kode, emergency } = req.body;
-    if (!lat || !longi || typeof lat !== 'number' || typeof longi !== 'number') {
+    const longitude = parseFloat(longi);
+    const latitude = parseFloat(lat);
+    if (!latitude || !longitude || typeof latitude !== 'number' || typeof longitude !== 'number') {
         return res.status(400).json({
             status: 400,
             success: false,
@@ -72,17 +74,17 @@ const liveLocation = async (req, res) => {
             });
         }
     
-        lastLocation = { longi, lat };
+        lastLocation = { longitude, latitude };
         lastKode = kode;
         location = req.body;
            const destinationCoords = {
-            longi: patientData.alamatTujuan.longi,
-            lat: patientData.alamatTujuan.lat
+            longitude: patientData.alamatTujuan.longi,
+            latitude: patientData.alamatTujuan.lat
         };
         
-        const distanceToDestination = haversineDistance(lastLocation.longi, lastLocation.lat, destinationCoords.longi, destinationCoords.lat);
+        const distanceToDestination = haversineDistance(lastLocation.longitude, lastLocation.latitude, destinationCoords.longitude, destinationCoords.latitude);
         
-        const distanceFromStart = haversineDistance(lastLocation.longi, lastLocation.lat, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
+        const distanceFromStart = haversineDistance(lastLocation.longitude, lastLocation.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
         
         let message = "";
         emergencyState = emergency === "true";
@@ -179,13 +181,13 @@ const getLocation = async (req, res) => {
         }
         const latestLocation = history.locationHistory[history.locationHistory.length - 1];
         const destinationCoords = {
-            longi: patientData.alamatTujuan.longi,
-            lat: patientData.alamatTujuan.lat
+            longitude: patientData.alamatTujuan.longi,
+            latitude: patientData.alamatTujuan.lat
         };
     
-        const distanceToDestination = haversineDistance(latestLocation.location.longi, latestLocation.location.lat, destinationCoords.longi, destinationCoords.lat);
+        const distanceToDestination = haversineDistance(latestLocation.location.longitude, latestLocation.location.latitude, destinationCoords.longitude, destinationCoords.latitude);
     
-        const distanceFromStart = haversineDistance(latestLocation.location.longi, latestLocation.location.lat, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
+        const distanceFromStart = haversineDistance(latestLocation.location.longitude, latestLocation.location.latitude, patientData.alamatRumah.longi, patientData.alamatRumah.lat);
     
         const formattedTimestamp = moment(latestLocation.timestamp).format('YYYY-MM-DD HH:mm:ss');
         let message = "";
