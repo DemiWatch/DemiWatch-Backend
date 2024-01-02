@@ -45,7 +45,7 @@ async function tambahPatient(req, res) {
     // );
     const updatedUser = await User.findByIdAndUpdate(
       req.user.userId,
-      { $set: { patients: [dataPatient._id] } }, 
+      { $set: { patients: [dataPatient._id] } }, // Menggunakan $set untuk mengganti array patients
       { new: true }
     );
 
@@ -101,20 +101,7 @@ async function getPatient(req, res) {
     });
   }
 }
-//"alamatRumah": "{\"latitude\":-7.2871333,\"longitude\":112.7912251,\"name\":\"Rumah\"}",
-// "alamatTujuan": "{\"latitude\":-7.2889887,\"longitude\":112.7888736,\"name\":\"Stadion ITB\"}",
-// {
-//   "alamatRumah": {
-//   "name": "Rumah",
-//   "longi": 112.7888736,
-//   "lat": -7.2889887
-// },
-//   "alamatTujuan": {
-//       "name": "Stadion ITS",
-//       "longi": 112.7912251,
-//       "lat": -7.2871333
-//   }
-// }
+
 async function updatePatient(req, res){
   const { id } = req.params;
   const { nama, umur, jenisPenyakit, catatan, kode, alamatRumah, alamatTujuan } = req.body;
@@ -141,8 +128,8 @@ async function updatePatient(req, res){
       jenisPenyakit,
       catatan,
       kode,
-      alamatRumah: JSON.parse(alamatRumah),
-      alamatTujuan: JSON.parse(alamatTujuan),
+      alamatRumah,
+      alamatTujuan,
     }, { new: true });
 
     if (!updatedPatient) {
@@ -152,31 +139,12 @@ async function updatePatient(req, res){
         error: 'Patient data not found'
       });
     }
-    const responsePatient = {
-      _id: updatedPatient._id,
-      nama: updatedPatient.nama,
-      umur: updatedPatient.umur,
-      jenisPenyakit: updatedPatient.jenisPenyakit,
-      catatan: updatedPatient.catatan,
-      kode: updatedPatient.kode,
-      alamatRumah: {
-        name: updatedPatient.alamatRumah.name,
-        longi: updatedPatient.alamatRumah.longitude,
-        lat: updatedPatient.alamatRumah.latitude,
-      },
-      alamatTujuan: {
-        name: updatedPatient.alamatTujuan.name,
-        longi: updatedPatient.alamatTujuan.longitude,
-        lat: updatedPatient.alamatTujuan.latitude,
-      },
-      createdBy: updatedPatient.createdBy,
-      __v: updatedPatient.__v,
-    };
+
     res.json({
       status: 200,
       success: true,
       message: 'Patient data is updated successfully',
-      data: responsePatient
+      data: updatedPatient
     });
   } catch (error) {
     res.status(500).json({
