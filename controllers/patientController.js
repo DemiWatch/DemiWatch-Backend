@@ -45,7 +45,7 @@ async function tambahPatient(req, res) {
     // );
     const updatedUser = await User.findByIdAndUpdate(
       req.user.userId,
-      { $set: { patients: [dataPatient._id] } }, // Menggunakan $set untuk mengganti array patients
+      { $set: { patients: [dataPatient._id] } },
       { new: true }
     );
 
